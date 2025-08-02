@@ -1,0 +1,5 @@
+{
+    "Lua.workspace.library": [
+        "${addons}/moonloader/module/library"
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "Lua.workspace.library": [
+        "C:\\Users\\amids\\Documents\\LuaAddons",
+        "${addons}/moonloader/module/library"
+    ],
+    "Lua.workspace.checkThirdParty": false
+}
