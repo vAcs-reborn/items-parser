@@ -1,0 +1,12 @@
+{
+    "main": "src\\init.lua",
+    "out": "dist\\vacs-items-parser.lua",
+    "remove_comments": true,
+    "modules": {
+        "items": "src\\items.lua",
+        "hooks": "src\\hooks.lua",
+        "constants": "src\\constants.lua",
+        "utils.helpers": "src\\utils\\helpers.lua",
+        "utils.bitstream": "src\\utils\\bitstream.lua"
+    }
+}
