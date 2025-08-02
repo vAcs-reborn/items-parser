@@ -9,14 +9,15 @@ addEventHandler('onSendPacket', function(id, bs)
         elseif (str == PATTERN.CLOSE_MENU) then
             Items.isAnyMenuActive = false;
         end
-        Msg('Menu status:', tostring(Items.isAnyMenuActive));
+        if (State ~= STATE.NONE) then
+            Msg('Menu status:', tostring(Items.isAnyMenuActive));
+        end
     end
 end);
 
 addEventHandler('onReceivePacket', function(id, bs)
     local status, event, data = CEF:readIncomingPacket(id, bs, true);
     if (status) then
-        print(event);
         if (event == PATTERN.EVENT_ADD_ITEM) then
             Items:cefHandler(data);
         elseif (event == PATTERN.EVENT_OPEN_MENU) then
@@ -37,19 +38,15 @@ addEventHandler('onReceivePacket', function(id, bs)
                     wait(500);
                     Msg('Start...');
                     SetState(STATE.WAITING_FOR_CLICK);
-                    Items.activeItemIndex = Items.activeMenu == MENU_TYPE.DEFAULT and 798 or 1188;
+                    Items.activeItemIndex = 0; --Items.activeMenu == MENU_TYPE.DEFAULT and 798 or 1188;
                     ClickItem();
                 end);
             end
         elseif (event == PATTERN.EVENT_SET_ACTIVE_VIEW) then
-            Msg('active view = ', data[1])
+            if (State ~= STATE.NONE) then
+                Msg('active view = ', data[1]);
+            end
         end
-    end
-end);
-
-addEventHandler('onScriptTerminate', function(scr)
-    if (scr == thisScript()) then
-        
     end
 end);
 
@@ -82,8 +79,8 @@ local function vectorToTable(vector)
     return { vector.x, vector.y, vector.z };
 end
 
-function SampEvents.onSetPlayerAttachedObject(playerId, index, create, object)
-    if (playerId == MyId()) then
+function SampEvents.onSetPlayerAttachedObject(playerId, _, _, object)
+    if (State ~= STATE.NONE and playerId == MyId()) then
         Items:attachHandler(
             Items.activeItemIndex,
             object.modelId,
@@ -99,10 +96,10 @@ function SampEvents.onSetPlayerAttachedObject(playerId, index, create, object)
 end
 
 function ArizonaEvents.onArizonaSetPlayerAttachedObject(data)
-    if (data.player_id == MyId()) then
+    if (State ~= STATE.NONE and data.player_id == MyId()) then
          Items:attachHandler(
             Items.activeItemIndex,
-            data.object.modelId,
+            data.object.model_id,
             data.object.bone,
             vectorToTable(data.object.offset),
             vectorToTable(data.object.rotation),

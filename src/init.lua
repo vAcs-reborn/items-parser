@@ -4,9 +4,14 @@ require('utils.helpers')
 require('items');
 require('utils.bitstream');
 require('hooks');
+local encoding = require('encoding');
+
+encoding.default = 'CP1251';
+u8 = encoding.UTF8;
 
 State = STATE.NONE;
 LastItemClick = os.clock();
+local font = renderCreateFont('Trebuchet MS', 10, 5);
 
 function ClickItem()
     local itemIndex = Items.activeItemIndex;
@@ -15,11 +20,9 @@ function ClickItem()
     Msg('Sent click to item' .. itemIndex)
 end
 
-local font = renderCreateFont('Trebuchet MS', 10, 5);
-
 function main()
     while not isSampAvailable() do wait(0) end
-    Msg('Loaded, use', COMMAND.TOGGLE);
+    Msg('Loaded, use /' .. COMMAND.TOGGLE);
     sampRegisterChatCommand(COMMAND.TOGGLE, function()
         if (State == STATE.NONE) then
             Msg('Enabled!');
@@ -44,12 +47,9 @@ function main()
                 0xFFffffff,
                 false
             );
-            if (Items.activeMenu == MENU_TYPE.NONE) then
-                SetState(STATE.NONE);
-                Msg('{ffff00} Page is NONE, stopped!');
-            end
-            if (State == STATE.WAITING_FOR_CLICK and os.clock() - LastItemClick > 0.2) then 
-                if (not Items.menuList[Items.activeMenu][Items.activeItemIndex + 1]) then
+            if (State == STATE.WAITING_FOR_CLICK and os.clock() - LastItemClick > 0.2) then
+                Msg('Active menu', Items.activeMenu);
+                if (not Items.menuList[Items.activeMenu] or not Items.menuList[Items.activeMenu][Items.activeItemIndex + 1]) then
                     Items.activeItemIndex = 0;
                     Msg('Item index out of range -', Items.activeItemIndex, 'of', Items.maxItemIndex[Items.activeMenu], 'menu type is', Items.activeMenu);
                     if (Items.activeMenu == MENU_TYPE.DEFAULT) then
@@ -73,10 +73,6 @@ function main()
                     LastItemClick = os.clock();
                 end
             end
-        end
-        
-        if (wasKeyPressed(49)) then
-            CEF:send(PATTERN.CLOSE_TESTDRIVE);
         end
     end
 end

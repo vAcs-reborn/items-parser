@@ -89,6 +89,6 @@ function Items:save()
     if (not file) then
         return Msg('{ff0000}ERROR: could not open file:', OUTPUT_FILENAME);
     end
-    file:write(encodeJson(Items.parsed));
+    file:write(u8(encodeJson(Items.parsed)));
     file:close();
 end
